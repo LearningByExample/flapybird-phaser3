@@ -4,6 +4,10 @@ A clone of Flappy Bird using Phaser 3, this project have been made to do introdu
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](/LICENSE)
 
+## Running demo
+
+To play the game just visit the url: https://learningbyexample.github.io/flapybird-phaser3/dist/
+
 ## Reference projects:
 
 https://github.com/photonstorm/phaser3-project-template
