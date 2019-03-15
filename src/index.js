@@ -15,8 +15,7 @@ const config = {
   type: Phaser.AUTO,
   parent: "phaser-example",
   width: 800,
-  height: 624,
-  backgroundColor: '#4ec0ca',
+  height: 600,
   physics: {
     default: 'arcade',
     arcade: {
@@ -31,7 +30,9 @@ const config = {
   },
   logic: {
     speedX: -200,
-    pipeGap: 460
+    pipeGap: 460,
+    gravity: 1000,
+    jump: -350
   },
   audio: {
     disableWebAudio: true
@@ -70,7 +71,7 @@ function create() {
   this.bird = this.physics.add.sprite(100, 50, 'downflap').play('flap');
   this.bird.originX = -0.2
   this.bird.originY = 0.5;
-  this.bird.body.gravity.y = 1000;
+  this.bird.body.gravity.y = config.logic.gravity;
   this.bird.setDepth(100);
   this.bird.die = false;
 
@@ -102,7 +103,7 @@ function create() {
 
   posX = 0;
   for (let index = 0; index < 5; index++) {
-    let bg = this.backGround.create(posX, 265, 'bg');
+    let bg = this.backGround.create(posX, 250, 'bg');
     bg.setVelocity(config.logic.speedX / 2, 0);
     posX += bg.width;
   }
@@ -172,7 +173,7 @@ function jump(pointer) {
       angle: { value: -20, duration: 100 },
     });
 
-    this.bird.setVelocity(0, -350);
+    this.bird.setVelocity(0, config.logic.jump);
     this.wing.stop();
     this.wing.play();
   }
