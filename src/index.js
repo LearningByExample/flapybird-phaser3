@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+import messageImg from "./assets/message.png";
 import downflapImg from "./assets/bluebird-downflap.png";
 import midflapImg from "./assets/bluebird-midflap.png";
 import upflapImg from "./assets/bluebird-upflap.png";
@@ -42,6 +43,7 @@ const config = {
 const game = new Phaser.Game(config);
 
 function preload() {
+  this.load.image('message', messageImg);
   this.load.image('downflap', downflapImg);
   this.load.image('midflap', midflapImg);
   this.load.image('upflap', upflapImg);
@@ -56,7 +58,6 @@ function preload() {
 }
 
 function create() {
-
   this.anims.create({
     key: 'flap',
     frames: [
@@ -68,10 +69,8 @@ function create() {
     repeat: -1
   });
 
-  this.bird = this.physics.add.sprite(100, 50, 'downflap').play('flap');
-  this.bird.originX = -0.2
-  this.bird.originY = 0.5;
-  this.bird.body.gravity.y = config.logic.gravity;
+  this.bird = this.physics.add.sprite(100, config.height/2, 'downflap').play('flap');
+  this.bird.body.gravity.y = 0;
   this.bird.setDepth(100);
   this.bird.die = false;
 
@@ -88,25 +87,10 @@ function create() {
   this.pipes = this.physics.add.group();
   this.physics.add.overlap(this.bird, this.pipes, touchPipe, null, this);
 
-  this.floor = this.physics.add.group();
+  this.floor = createScrollingBackground(this, config.height - 50, 'base', config.logic.speedX, 99);
   this.physics.add.overlap(this.bird, this.floor, touchPipe, null, this);
 
-  let posX = 0;
-  for (let index = 0; index < 4; index++) {
-    let base = this.floor.create(posX, config.height - 50, 'base');
-    base.setVelocity(config.logic.speedX, 0);
-    base.setDepth(99);
-    posX += base.width;
-  }
-
-  this.backGround = this.physics.add.group();
-
-  posX = 0;
-  for (let index = 0; index < 5; index++) {
-    let bg = this.backGround.create(posX, 250, 'bg');
-    bg.setVelocity(config.logic.speedX / 2, 0);
-    posX += bg.width;
-  }
+  this.backGround = createScrollingBackground(this, 250, 'bg', config.logic.speedX / 2, 0);
 
   this.wing = this.sound.add("wing");
   this.hit = this.sound.add("hit");
@@ -116,6 +100,22 @@ function create() {
   this.score = this.add.text(0, 0, 'Points: 0', { fontFamily: 'Arial', fontSize: 32, color: '#ffffff' });
   this.score.setDepth(110);
   this.points = 0;
+  this.messasge = this.add.sprite(config.width/2, config.height/2, "message");
+}
+
+function createScrollingBackground(game, y, img, speed, depth) {
+  let scroll = game.physics.add.group();
+  let posX = 0;
+  while (true) {
+    let base = scroll.create(posX, y, img);
+    base.setVelocity(speed, 0);
+    base.setDepth(depth);
+    posX += base.width;
+    if ((posX - (base.width / 2)) > (config.width + base.width)) {
+      break;
+    }
+  }
+  return scroll;
 }
 
 function touchPipe() {
@@ -130,11 +130,8 @@ function touchPipe() {
   });
 
   this.add.sprite(config.width / 2, config.height / 2, 'gameOver');
-
   this.time.delayedCall(2500, reset, null, this);
-  this.hit.stop();
   this.hit.play();
-  this.die.stop();
   this.die.play();
 }
 
@@ -145,45 +142,46 @@ function reset() {
 function addPipe() {
   if (!this.bird.die) {
     const posX = 1000;
-
     var rndValue = Phaser.Math.Between(0, 250);
 
     let pipeUp = this.pipes.create(posX, 160 - rndValue, 'pipeGreen');
     pipeUp.angle = 180;
     let pipeDown = this.pipes.create(posX, pipeUp.y + config.logic.pipeGap, 'pipeGreen');
-
     pipeUp.setVelocity(config.logic.speedX, 0);
     pipeDown.setVelocity(config.logic.speedX, 0);
     this.points++;
     let realPoints = this.points - 3;
-    if (realPoints <= 0) {
-      realPoints = 0;
-    } else {
+    if (realPoints > 0) {
       this.score.setText("Points: " + realPoints)
       this.point.play();
     }
   }
-
 }
 
 function jump(pointer) {
   if (!this.bird.die) {
+    if(this.bird.body.gravity.y==0){
+      this.bird.body.gravity.y = config.logic.gravity;
+      this.add.tween({
+        targets: this.messasge,
+        alpha: { value: 0, duration: 1500 },
+      });
+    }
     this.add.tween({
       targets: this.bird,
       angle: { value: -20, duration: 100 },
     });
-
     this.bird.setVelocity(0, config.logic.jump);
-    this.wing.stop();
     this.wing.play();
   }
 }
 
-function loopBg(group) {
-  let firstBase = group[0];
+function scroll(group) {
+  let childrens = group.getChildren();
+  let firstBase = childrens[0];
   if (firstBase.x < (-firstBase.width)) {
     let posX = 0;
-    group.forEach(element => {
+    childrens.forEach(element => {
       element.x = posX;
       posX += firstBase.width;
     });
@@ -195,6 +193,6 @@ function update() {
     this.bird.angle += 1;
   }
 
-  loopBg(this.floor.getChildren());
-  loopBg(this.backGround.getChildren());
+  scroll(this.floor);
+  scroll(this.backGround);
 }
