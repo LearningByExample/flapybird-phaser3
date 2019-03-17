@@ -7,14 +7,10 @@ import pipeGreenImg from "./assets/pipe-green.png";
 import bgImg from "./assets/background-day.png";
 import baseImg from "./assets/base.png";
 import gameOverImg from "./assets/gameover.png";
-import wingSoundOGG from "./assets/wing.ogg";
-import wingSoundWAV from "./assets/wing.wav";
-import hitSoundOGG from "./assets/hit.ogg";
-import hitSoundWAV from "./assets/hit.wav";
-import dieSoundOGG from "./assets/die.ogg";
-import dieSoundWAV from "./assets/die.wav";
-import pointSoundOGG from "./assets/point.ogg";
-import pointSoundWAV from "./assets/point.wav";
+import wingSound from "./assets/wing.ogg";
+import hitSound from "./assets/hit.ogg";
+import dieSound from "./assets/die.ogg";
+import pointSound from "./assets/point.ogg";
 
 const config = {
   type: Phaser.AUTO,
@@ -55,10 +51,10 @@ function preload() {
   this.load.image('base', baseImg);
   this.load.image('gameOver', gameOverImg);
   this.load.image('bg', bgImg);
-  this.load.audio('wing', [wingSoundOGG, wingSoundWAV]);
-  this.load.audio('hit', [hitSoundOGG, hitSoundWAV]);
-  this.load.audio('die', [dieSoundOGG, dieSoundWAV]);
-  this.load.audio('point', [pointSoundOGG, pointSoundWAV]);
+  this.load.audio('wing', [wingSound]);
+  this.load.audio('hit', [hitSound]);
+  this.load.audio('die', [dieSound]);
+  this.load.audio('point', [pointSound]);
 }
 
 function create() {
