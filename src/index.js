@@ -7,10 +7,10 @@ import pipeGreenImg from "./assets/pipe-green.png";
 import bgImg from "./assets/background-day.png";
 import baseImg from "./assets/base.png";
 import gameOverImg from "./assets/gameover.png";
-import wingSound from "./assets/wing.ogg";
-import hitSound from "./assets/hit.ogg";
-import dieSound from "./assets/die.ogg";
-import pointSound from "./assets/point.ogg";
+import wingSound from "./assets/wing.wav";
+import hitSound from "./assets/hit.wav";
+import dieSound from "./assets/die.wav";
+import pointSound from "./assets/point.wav";
 
 const config = {
   type: Phaser.AUTO,
@@ -34,9 +34,6 @@ const config = {
     pipeGap: 460,
     gravity: 1000,
     jump: -350
-  },
-  audio: {
-    disableWebAudio: true
   }
 };
 
@@ -69,7 +66,7 @@ function create() {
     repeat: -1
   });
 
-  this.bird = this.physics.add.sprite(100, config.height/2, 'downflap').play('flap');
+  this.bird = this.physics.add.sprite(100, config.height / 2, 'downflap').play('flap');
   this.bird.body.gravity.y = 0;
   this.bird.setDepth(100);
   this.bird.die = false;
@@ -100,7 +97,7 @@ function create() {
   this.score = this.add.text(0, 0, 'Points: 0', { fontFamily: 'Arial', fontSize: 32, color: '#ffffff' });
   this.score.setDepth(110);
   this.points = 0;
-  this.messasge = this.add.sprite(config.width/2, config.height/2, "message");
+  this.messasge = this.add.sprite(config.width / 2, config.height / 2, "message");
 }
 
 function createScrollingBackground(game, y, img, speed, depth) {
@@ -160,7 +157,7 @@ function addPipe() {
 
 function jump(pointer) {
   if (!this.bird.die) {
-    if(this.bird.body.gravity.y==0){
+    if (this.bird.body.gravity.y == 0) {
       this.bird.body.gravity.y = config.logic.gravity;
       this.add.tween({
         targets: this.messasge,
